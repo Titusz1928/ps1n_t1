@@ -5,9 +5,10 @@
  
 // setare pini LCD
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+
 int sec = 55;
-int hour = 23;  // Initialize the hour to 9
-int minute = 58; // Initialize the minute to 0
+int hour = 23; 
+int minute = 59; 
 int tmp2=0;
  
 // declarare lcd
@@ -65,6 +66,7 @@ void refresh(){
 
 void loop()
 {
+  	//temperatura
  	int tmp = read_temperature(); //Salveaza valoarea temperaturii
  	lcd.clear();
  	lcd.setCursor(1, 0);
@@ -77,44 +79,49 @@ void loop()
     }
   	tmp2=tmp;
   	
-	if (tmp2 != tmp)
- 	{
-    	//Serial.print(tmp);
-    	//Serial.print(' ');
-  	}
-  	tmp2 = tmp;
+  	//ora
+    //lcd.clear();
+    lcd.setCursor(1, 1);
+    lcd.print("Clock: ");
 
- 	if (TCNT1 > 15625)
-  	{
-     lcd.setCursor(1,10);
-     refresh();
+    if (hour < 10)
+        lcd.print("0");
+    lcd.print(hour);
+    lcd.print(":");
 
-    
-     if(sec==59){
-      	minute++;
-       refresh();
-     }
-     if(sec==60){     
-       sec=0;
-     }
-  	 if (minute == 60)
-  	 {
-    	minute = 0;
-    	hour++;
-       refresh();
-     }
-	 if (hour == 24)
-  	 {
-    	hour = 0;
-       refresh();
- 	 }
-     sec++;
-     //lcd.setCursor(1,8);
-     if(sec<10)
-       lcd.print("0");
- 	 lcd.print(sec);
-     TCNT1 = 0;
-	 }
+    if (minute < 10)
+        lcd.print("0");
+    lcd.print(minute);
+    lcd.print(":");
 
+    if (sec < 10)
+        lcd.print("0");
+    lcd.print(sec);
+
+    if (tmp2 != tmp) {
+        Serial.print(tmp);
+        Serial.print(' ');
+    }
+    tmp2 = tmp;
+
+    if (TCNT1 > 15625) {
+        if (sec == 59) {
+            minute++;
+            sec = 0;
+        } else {
+            sec++;
+        }
+
+        if (minute == 60) {
+            minute = 0;
+            hour++;
+        }
+
+        if (hour == 24) {
+            hour = 0;
+        }
+
+        TCNT1 = 0;
+    }
  	delay(1000);
 }
